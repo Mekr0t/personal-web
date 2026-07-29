@@ -34,9 +34,25 @@ export async function createReveals() {
     { threshold: 0.12, rootMargin: '0px 0px -6% 0px' },
   );
 
-  for (const el of document.querySelectorAll('[data-reveal]')) fadeObserver.observe(el);
+  const fadeTargets = [...document.querySelectorAll('[data-reveal]')];
+  for (const el of fadeTargets) fadeObserver.observe(el);
+
+  // Safety net. These elements start at opacity 0, so anything that stops the
+  // observer from ever firing — a background tab that never composites, an
+  // aggressive privacy extension — would leave the page blank rather than
+  // merely un-animated. Reveal whatever is still hidden after a few seconds.
+  setTimeout(() => {
+    for (const el of fadeTargets) el.classList.add('is-in');
+  }, 4000);
 
   /* ── split headlines ───────────────────────────────────────────── */
+
+  const splitTargets = [...document.querySelectorAll('[data-split]')];
+
+  // Hold the headlines back until they have been split and set to their start
+  // position. Otherwise they render fully visible, then snap to hidden the
+  // moment the font resolves, then animate in — a visible double take.
+  for (const el of splitTargets) el.style.visibility = 'hidden';
 
   // Split only once the real font is in. Lines measured against fallback
   // metrics re-wrap the moment the webfont arrives, and the fixed line boxes
@@ -71,7 +87,7 @@ export async function createReveals() {
     { threshold: 0.2 },
   );
 
-  for (const el of document.querySelectorAll('[data-split]')) {
+  for (const el of splitTargets) {
     const split = new SplitText(el, { type: 'lines', linesClass: 'line__in' });
 
     // Wrap each line in its own overflow-hidden mask, so a line slides out from
@@ -84,6 +100,7 @@ export async function createReveals() {
     }
 
     gsap.set(split.lines, { yPercent: 118 });
+    el.style.visibility = '';
 
     el._split = split;
     splits.push(split);
