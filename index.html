@@ -2,474 +2,314 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Roman - engineer & builder</title>
-<meta name="description" content="Engineer from Slovakia. I build end-to-end systems: vision + LLM robot control, creator tools, and fast web apps.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Roman Šafranko — software that sees, decides, and ships</title>
+<meta name="description" content="Software developer in Prešov, Slovakia. Computer vision, local LLM tooling, and browser-first products — built end to end.">
+<meta name="author" content="Roman Šafranko">
+<link rel="canonical" href="https://www.romansafranko.com/">
 
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='4' y='4' width='24' height='24' fill='none' stroke='%2312A150' stroke-width='3'/%3E%3Crect x='1' y='1' width='7' height='7' fill='%2312A150'/%3E%3Crect x='24' y='24' width='7' height='7' fill='%2312A150'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.romansafranko.com/">
+<meta property="og:title" content="Roman Šafranko — software that sees, decides, and ships">
+<meta property="og:description" content="Computer vision, local LLM tooling, and browser-first products — built end to end.">
+<!-- TODO: drop a 1200×630 screenshot of the hero at public/og.png, then add:
+     <meta property="og:image" content="https://www.romansafranko.com/og.png">
+     Left out rather than pointed at a file that 404s, which is worse than
+     having no preview image at all. -->
+<meta name="twitter:card" content="summary">
+<meta name="theme-color" content="#07100C" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F2F4F1" media="(prefers-color-scheme: light)">
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='6' y='6' width='20' height='20' fill='none' stroke='%2312A150' stroke-width='2.5'/%3E%3Crect x='1' y='1' width='7' height='7' fill='%2312A150'/%3E%3Crect x='24' y='24' width='7' height='7' fill='%2312A150'/%3E%3C/svg%3E">
 
-<style>
-/* ————————————————————————————————— tokens */
-:root{
-  --paper:#F2F4F1;        /* cool workshop grey-green, not cream */
-  --paper-2:#E9ECE8;
-  --ink:#171B19;
-  --muted:#5C6660;
-  --line:#D4DAD3;
-  --acc:#12A150;          /* detection-overlay green */
-  --acc-ink:#0C7A3C;
-  --amber:#B97803;
-  --display:"Bricolage Grotesque",system-ui,sans-serif;
-  --body:"IBM Plex Sans",system-ui,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,monospace;
-  --maxw:1060px;
-  --pad:clamp(20px,5vw,48px);
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Roman Šafranko",
+  "jobTitle": "Software Developer",
+  "url": "https://www.romansafranko.com/",
+  "email": "mailto:roman.safranko@outlook.com",
+  "address": { "@type": "PostalAddress", "addressLocality": "Prešov", "addressCountry": "SK" },
+  "alumniOf": { "@type": "CollegeOrUniversity", "name": "Technical University of Košice" },
+  "sameAs": ["https://github.com/Mekr0t"],
+  "knowsAbout": ["Computer vision", "Large language model tooling", "Robotics", "Web development"]
 }
-@media (prefers-color-scheme: dark){
-  :root{
-    --paper:#121614; --paper-2:#181D1A; --ink:#E7ECE8; --muted:#93A099;
-    --line:#2A322C; --acc:#2ECC71; --acc-ink:#57DE8F; --amber:#D9A03B;
-  }
-}
+</script>
 
-/* ————————————————————————————————— base */
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
-body{
-  margin:0; background:var(--paper); color:var(--ink);
-  font:400 17px/1.65 var(--body);
-  -webkit-font-smoothing:antialiased;
-}
-::selection{background:var(--acc); color:var(--paper)}
-a{color:inherit}
-h1,h2,h3{font-family:var(--display); line-height:1.15; margin:0; letter-spacing:-0.015em}
-section{scroll-margin-top:84px}
-.wrap{max-width:var(--maxw); margin:0 auto; padding:0 var(--pad)}
-.mono{font-family:var(--mono)}
-:focus-visible{outline:2px solid var(--acc); outline-offset:3px; border-radius:2px}
-
-/* ————————————————————————————————— detection overlay (signature) */
-.det{
-  position:relative; display:inline-block; padding:.02em .14em;
-  border:1.5px solid var(--acc);
-  /* selection handles in the four corners */
-  background-image:
-    linear-gradient(var(--acc),var(--acc)),linear-gradient(var(--acc),var(--acc)),
-    linear-gradient(var(--acc),var(--acc)),linear-gradient(var(--acc),var(--acc));
-  background-size:7px 7px; background-repeat:no-repeat;
-  background-position:-1px -1px, calc(100% + 1px) -1px, -1px calc(100% + 1px), calc(100% + 1px) calc(100% + 1px);
-}
-.det::before{
-  content:attr(data-label)"  "attr(data-conf);
-  position:absolute; bottom:calc(100% + 1.5px); left:-1.5px;
-  font:500 10px/1 var(--mono); letter-spacing:.08em; text-transform:uppercase;
-  background:var(--acc); color:var(--paper); padding:3px 6px; white-space:nowrap;
-}
-@media (prefers-reduced-motion: no-preference){
-  .det{opacity:1; animation:detIn .45s cubic-bezier(.2,.8,.2,1) both; animation-delay:var(--d,0s)}
-  @keyframes detIn{ from{opacity:0; transform:scale(1.06)} to{opacity:1; transform:none} }
-}
-
-/* ————————————————————————————————— nav */
-nav{
-  position:sticky; top:0; z-index:50;
-  background:var(--paper);
-  background:color-mix(in srgb, var(--paper) 88%, transparent);
-  backdrop-filter:blur(8px); border-bottom:1px solid var(--line);
-}
-.nav-in{
-  max-width:var(--maxw); margin:0 auto; padding:14px var(--pad);
-  display:flex; align-items:center; gap:20px;
-}
-.wordmark{font-family:var(--display); font-weight:800; font-size:19px; text-decoration:none; letter-spacing:-.02em}
-.wordmark b{color:var(--acc-ink)}
-.nav-links{margin-left:auto; display:flex; gap:clamp(14px,3vw,28px); align-items:center}
-.nav-links a{
-  font:500 12px/1 var(--mono); letter-spacing:.12em; text-transform:uppercase;
-  text-decoration:none; color:var(--muted); padding:6px 2px;
-}
-.nav-links a:hover{color:var(--ink)}
-.status{display:inline-flex; align-items:center; gap:8px; font:500 12px/1 var(--mono); letter-spacing:.08em; color:var(--acc-ink); white-space:nowrap}
-.status i{
-  width:8px; height:8px; border-radius:50%; background:var(--acc); display:inline-block;
-}
-@media (max-width:560px){ .status span{display:none} }
-
-/* ————————————————————————————————— hero */
-header.hero{padding-top:clamp(28px,4vh,48px); padding-bottom:clamp(48px,8vh,88px)}
-.hero-grid{
-  display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,340px);
-  gap:clamp(36px,6vw,84px); align-items:center;
-}
-.schematic{margin:0; justify-self:end; width:100%}
-.schematic svg{width:100%; height:auto; display:block}
-.schematic text{font-family:var(--mono); letter-spacing:.06em}
-.schematic figcaption{
-  margin-top:12px; font:400 11.5px/1.6 var(--mono); color:var(--muted); letter-spacing:.04em;
-}
-@media (max-width:940px){
-  .hero-grid{grid-template-columns:1fr}
-  .schematic{max-width:340px; justify-self:start; margin-top:10px}
-}
-.eyebrow{
-  font:500 12px/1 var(--mono); letter-spacing:.16em; text-transform:uppercase;
-  color:var(--muted); margin:0 0 26px; display:flex; align-items:center; gap:10px;
-}
-.eyebrow::before{content:""; width:9px; height:9px; background:var(--acc)}
-.hero h1{
-  font-size:clamp(2.2rem,5.5vw,4rem); font-weight:800; max-width:16ch;
-  line-height:1.28; margin-bottom:30px;
-}
-.hero p.lede{max-width:56ch; font-size:clamp(1.02rem,1.4vw,1.17rem); color:var(--ink); margin:0 0 14px}
-.hero p.lede .q{color:var(--muted)}
-.facts{
-  margin-top:44px; padding-top:20px; border-top:1px solid var(--line);
-  display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:18px 28px;
-}
-.facts div{font:400 12.5px/1.7 var(--mono)}
-.facts dt{color:var(--muted); letter-spacing:.12em; text-transform:uppercase; font-size:10.5px}
-.facts dd{margin:2px 0 0; color:var(--ink)}
-.facts .ok{color:var(--acc-ink)}
-
-/* ————————————————————————————————— section heads */
-.shead{
-  display:flex; align-items:baseline; justify-content:space-between; gap:16px;
-  border-bottom:1px solid var(--line); padding-bottom:14px; margin-bottom:0;
-}
-.shead h2{font-size:clamp(1.5rem,3vw,2.1rem); font-weight:700}
-.shead .count{font:500 12px/1 var(--mono); color:var(--muted); letter-spacing:.1em}
-
-/* ————————————————————————————————— work */
-#work{padding-top:clamp(40px,7vh,72px); padding-bottom:clamp(40px,7vh,72px)}
-.project{
-  position:relative; display:grid; gap:10px 40px;
-  grid-template-columns:minmax(150px,210px) 1fr;
-  padding:34px 18px 36px; margin:0 -18px; border-bottom:1px solid var(--line);
-  transition:background .2s ease;
-}
-.project:hover, .project:focus-within{background:var(--paper-2)}
-.project:hover h3, .project:focus-within h3{color:var(--acc-ink)}
-.p-body h3{transition:color .2s ease}
-.p-meta{font:400 12.5px/1.8 var(--mono); color:var(--muted)}
-.p-meta .yr{color:var(--ink); font-weight:500}
-.p-meta .role{display:block; margin-top:2px}
-.p-body h3{font-size:clamp(1.25rem,2.2vw,1.55rem); font-weight:700; margin-bottom:10px}
-.p-body p{margin:0 0 14px; max-width:62ch; color:var(--ink)}
-.p-out{list-style:none; margin:0 0 16px; padding:0; max-width:62ch}
-.p-out li{position:relative; padding-left:20px; margin:5px 0; color:var(--muted); font-size:15.5px}
-.p-out li::before{content:"→"; position:absolute; left:0; color:var(--acc-ink)}
-.p-stack{display:flex; flex-wrap:wrap; gap:8px}
-.p-stack span{
-  font:500 11.5px/1 var(--mono); letter-spacing:.04em; color:var(--muted);
-  border:1px solid var(--line); padding:5px 9px; border-radius:2px; background:var(--paper);
-}
-@media (max-width:700px){
-  .project{grid-template-columns:1fr; padding:28px 14px 30px; margin:0 -14px}
-  .p-meta .role{display:inline; margin-left:8px}
-}
-
-/* ————————————————————————————————— approach */
-#approach{padding-top:clamp(40px,7vh,72px); padding-bottom:clamp(40px,7vh,72px)}
-.rules{display:grid; grid-template-columns:1fr 1fr; gap:0}
-.rule{padding:30px 26px 32px; border-bottom:1px solid var(--line)}
-.rule:nth-child(odd){border-right:1px solid var(--line); padding-left:0}
-.rule:nth-child(even){padding-right:0}
-.rule:nth-last-child(-n+2){border-bottom:0}
-.rule h3{font-size:1.2rem; font-weight:700; margin-bottom:10px}
-.rule h3 em{font-style:normal; color:var(--acc-ink)}
-.rule p{margin:0; color:var(--muted); font-size:15.5px}
-@media (max-width:700px){
-  .rules{grid-template-columns:1fr}
-  .rule, .rule:nth-child(odd){border-right:0; padding-left:0; padding-right:0}
-  .rule:nth-last-child(-n+2){border-bottom:1px solid var(--line)}
-  .rule:last-child{border-bottom:0}
-}
-
-/* ————————————————————————————————— stack */
-#stack{padding-top:clamp(24px,4vh,40px); padding-bottom:clamp(48px,7vh,80px)}
-.stackrow{
-  display:grid; grid-template-columns:minmax(150px,210px) 1fr; gap:8px 40px;
-  padding:16px 0; border-bottom:1px solid var(--line); align-items:baseline;
-}
-.stackrow:last-child{border-bottom:0}
-.stackrow dt{font:500 11px/1.6 var(--mono); letter-spacing:.14em; text-transform:uppercase; color:var(--muted)}
-.stackrow dd{margin:0; font-size:15.5px}
-@media (max-width:700px){ .stackrow{grid-template-columns:1fr; gap:4px} }
-
-/* ————————————————————————————————— contact */
-#contact{padding-top:clamp(56px,10vh,110px); padding-bottom:clamp(48px,8vh,88px)}
-#contact h2{font-size:clamp(2rem,5vw,3.2rem); font-weight:800; max-width:16ch; margin-bottom:18px}
-#contact .lede{max-width:54ch; color:var(--ink); margin:0 0 34px}
-.cta-row{display:flex; flex-wrap:wrap; gap:14px; align-items:center}
-.btn{
-  display:inline-block; text-decoration:none; font:600 15px/1 var(--body);
-  padding:15px 26px; border-radius:2px; border:1.5px solid var(--ink);
-  transition:transform .12s ease;
-}
-.btn:active{transform:translateY(1px)}
-.btn-primary{background:var(--ink); color:var(--paper); position:relative}
-.btn-primary:hover{background:var(--acc); border-color:var(--acc)}
-.btn-ghost{color:var(--ink); border-color:var(--line); background:transparent}
-.btn-ghost:hover{border-color:var(--ink)}
-.sk-note{margin-top:26px; font:400 12.5px/1.7 var(--mono); color:var(--muted)}
-
-/* ————————————————————————————————— footer */
-footer{border-top:1px solid var(--line); padding:26px 0 40px}
-.foot-in{
-  max-width:var(--maxw); margin:0 auto; padding:0 var(--pad);
-  display:flex; flex-wrap:wrap; gap:10px 30px; justify-content:space-between;
-  font:400 12px/1.8 var(--mono); color:var(--muted);
-}
-
-/* ————————————————————————————————— scroll reveal */
-@media (prefers-reduced-motion: no-preference){
-  .reveal{opacity:0; transform:translateY(14px); transition:opacity .5s ease, transform .5s ease}
-  .reveal.in{opacity:1; transform:none}
-}
-</style>
+<script type="module" src="/src/main.js"></script>
 </head>
 <body>
 
-<nav aria-label="Main">
-  <div class="nav-in">
-    <a class="wordmark" href="#top">roman<b>.</b></a>
-    <div class="nav-links">
-      <span class="status" title="Open to work"><i></i><span>open to work</span></span>
-      <a href="#work">Work</a>
-      <a href="#approach">Approach</a>
-      <a href="#contact">Contact</a>
-    </div>
+<!-- ───────────────────────────────────────────────── boot -->
+<div class="boot" id="boot" aria-hidden="true">
+  <div class="boot__in">
+    <p class="boot__label mono">initialising perception stack</p>
+    <div class="boot__bar"><i id="boot-fill"></i></div>
+    <p class="boot__pct mono" id="boot-pct">00</p>
   </div>
+</div>
+
+<!-- ───────────────────────────────────────────────── gl -->
+<div class="stage" aria-hidden="true">
+  <canvas id="stage"></canvas>
+  <div class="stage__grain"></div>
+</div>
+<!-- Labels sit above the copy layer, so they stay crisp instead of being
+     washed out by the section scrim. -->
+<div class="dets" id="dets" aria-hidden="true"></div>
+
+<a class="skip" href="#work">Skip to work</a>
+
+<!-- ───────────────────────────────────────────────── nav -->
+<nav class="nav" aria-label="Main">
+  <div class="nav__in">
+    <a class="wordmark" href="#top">
+      <span class="wordmark__box" aria-hidden="true"></span>
+      roman<b>.</b>
+    </a>
+    <div class="nav__links">
+      <a href="#work" data-nav="work">Work</a>
+      <a href="#approach" data-nav="approach">Approach</a>
+      <a href="#stack" data-nav="stack">Stack</a>
+      <a href="#contact" data-nav="contact">Contact</a>
+    </div>
+    <span class="status" title="Open to work"><i></i><span>open to work</span></span>
+  </div>
+  <div class="nav__progress" id="nav-progress" aria-hidden="true"></div>
 </nav>
 
-<header class="hero wrap" id="top">
-  <div class="hero-grid">
-    <div class="hero-copy">
-      <p class="eyebrow">Portfolio · 2026 — Prešov, Slovakia</p>
-      <h1>I build software that sees, listens and actually
-        <span class="det" data-label="shipped" data-conf="0.99" style="--d:.35s">ships</span>.
-      </h1>
-      <p class="lede">Software engineer focused on computer vision, local AI tooling, and browser-first products. My thesis taught a robotic arm to follow voice commands; now I build creator tools, data apps, and practical systems end to end.”</p>
-    </div>
+<main>
 
-    <figure class="schematic" aria-label="How every project gets built">
-      <svg viewBox="0 0 340 352" role="img" aria-labelledby="figt">
-        <title id="figt">Build loop: idea, smallest end-to-end slice, build and test, ship, then use, learn and repeat</title>
-        <defs>
-          <marker id="ah" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6.5" markerHeight="6.5" orient="auto">
-            <path d="M0 0 L8 4 L0 8 z" fill="var(--muted)"/>
-          </marker>
-        </defs>
+<!-- ───────────────────────────────────────────────── hero -->
+<header class="hero" id="top" data-scene="0">
+  <div class="wrap">
+    <p class="eyebrow" data-reveal><span class="eyebrow__idx mono">00</span> Input · Prešov, Slovakia</p>
 
-        <rect x="40" y="8" width="180" height="48" rx="2" fill="none" stroke="var(--line)"/>
-        <text x="130" y="28" text-anchor="middle" font-size="10" fill="var(--ink)">IDEA</text>
-        <text x="130" y="44" text-anchor="middle" font-size="8" fill="var(--muted)">A REAL PROBLEM, NOT A STACK</text>
-        <line x1="130" y1="56" x2="130" y2="84" stroke="var(--muted)" marker-end="url(#ah)"/>
+    <h1 class="hero__h" data-split>
+      Software that sees,<br>decides, and
+      <span class="det" data-label="ships" data-conf="0.99">ships</span>.
+    </h1>
 
-        <rect x="40" y="88" width="180" height="48" rx="2" fill="none" stroke="var(--acc)" stroke-width="1.5"/>
-        <text x="130" y="108" text-anchor="middle" font-size="10" fill="var(--ink)">END-TO-END SLICE</text>
-        <text x="130" y="124" text-anchor="middle" font-size="8" fill="var(--muted)">UGLY, BUT COMPLETE</text>
-        <line x1="130" y1="136" x2="130" y2="164" stroke="var(--muted)" marker-end="url(#ah)"/>
+    <p class="lede" data-reveal>
+      I'm Roman Šafranko — a software developer working across computer vision,
+      local LLM tooling, and browser-first products. My bachelor's thesis taught a
+      robotic arm to take plain-language voice commands and carry them out, entirely
+      offline. I like the part where every piece has to work at once.
+    </p>
 
-        <rect x="40" y="168" width="180" height="48" rx="2" fill="none" stroke="var(--line)"/>
-        <text x="130" y="188" text-anchor="middle" font-size="10" fill="var(--ink)">BUILD · TEST</text>
-        <text x="130" y="204" text-anchor="middle" font-size="8" fill="var(--muted)">DEBUG AT THE SEAMS</text>
-        <line x1="130" y1="216" x2="130" y2="244" stroke="var(--muted)" marker-end="url(#ah)"/>
-
-        <rect x="40" y="248" width="180" height="52" rx="2" fill="var(--ink)"/>
-        <text x="130" y="270" text-anchor="middle" font-size="10" fill="var(--paper)">SHIP</text>
-        <text x="130" y="286" text-anchor="middle" font-size="8" fill="var(--paper)" opacity="0.75">PUT IT IN FRONT OF PEOPLE</text>
-
-        <!-- feedback edge: use, learn, repeat -->
-        <path d="M220 274 H300 V32 H228" fill="none" stroke="var(--muted)" stroke-dasharray="4 4" marker-end="url(#ah)"/>
-        <text transform="rotate(-90 316 154)" x="316" y="154" text-anchor="middle" font-size="8.5" fill="var(--muted)" letter-spacing="2">USE · LEARN · REPEAT</text>
-      </svg>
-      <figcaption>fig. 01 — the build loop</figcaption>
-    </figure>
+    <dl class="facts" data-reveal>
+      <div><dt>Status</dt><dd class="ok">Open — roles &amp; freelance</dd></div>
+      <div><dt>Based</dt><dd>Prešov, Slovakia · CET</dd></div>
+      <div><dt>Latest</dt><dd>VB Visualizer v2</dd></div>
+      <div><dt>Reply time</dt><dd>&lt; 24 hours</dd></div>
+    </dl>
   </div>
-
-  <dl class="facts">
-    <div><dt>Status</dt><dd class="ok">Open - mid SWE &amp; freelance</dd></div>
-    <div><dt>Based</dt><dd>Prešov, Slovakia (CET)</dd></div>
-    <div><dt>Last shipped</dt><dd>VB Visualizer v2</dd></div>
-    <div><dt>Reply time</dt><dd>&lt; 24 hours</dd></div>
-  </dl>
 </header>
 
-<section id="work" class="wrap reveal" aria-label="Selected work">
-  <div class="shead">
-    <h2>Selected work</h2>
-    <span class="count mono">4 projects · 2025—26</span>
-  </div>
-
-  <article class="project">
-    <div class="p-meta">
-      <span class="yr">2025—26</span>
-      <span class="role">Bachelor's thesis · TUKE</span>
+<!-- ───────────────────────────────────────────────── work -->
+<section id="work" class="section section--split" aria-labelledby="work-h">
+  <div class="wrap">
+    <div class="shead" data-reveal>
+      <p class="eyebrow"><span class="eyebrow__idx mono">01</span> Detections</p>
+      <h2 id="work-h">Selected work</h2>
+      <span class="shead__count mono">4 systems · 2025—2026</span>
     </div>
-    <div class="p-body">
-      <h3>Voice-controlled robotic arm</h3>
-      <p>A Dobot Magician robotic arm controlled through natural-language voice commands. The system combines local speech recognition, tool-calling with a locally hosted LLM, computer vision, OCR, and camera-to-robot mapping to execute real pick-and-place tasks offline.</p>
-      <ul class="p-out">
-        <li>Runs fully offline on local hardware with no cloud APIs.</li>
-        <li>Supports letter detection and rotation-safe pick-and-place.</li>
-        <li>Built and defended as my bachelor’s thesis in June 2026.6</li>
-      </ul>
-      <div class="p-stack">
-        <span>Python</span><span>OpenCV</span><span>Tesseract OCR</span><span>LM Studio</span><span>homography calibration</span><span>speech-to-text</span>
+
+    <article class="project" data-scene="1">
+      <div class="project__meta">
+        <span class="project__yr mono">2025—2026</span>
+        <span class="project__role mono">Bachelor's thesis · TU Košice</span>
       </div>
-    </div>
-  </article>
-
-  <article class="project">
-    <div class="p-meta">
-      <span class="yr">2026</span>
-      <span class="role">Personal product · in production</span>
-    </div>
-    <div class="p-body">
-      <h3>VB Visualizer</h3>
-      <p>“A browser-based music visualizer built for short-form content and music media. It uses Web Audio for real-time analysis, multiple visual modes, and synced lyrics to generate clean 9:16 visuals directly in the browser.</p>
-      <ul class="p-out">
-        <li>Browser-first architecture with real-time audio analysis and synced lyrics.</li>
-        <li>Reworked into a modular v2 structure for maintainability and new visual modes.</li>
-      </ul>
-      <div class="p-stack">
-        <span>JavaScript </span><span>Web Audio API</span><span>Canvas</span><span>LRCLIB</span><span>Browser-first</span>
+      <div class="project__body">
+        <h3>Voice-controlled robotic arm</h3>
+        <p>
+          A Dobot Magician that takes instructions in plain language. Speech-to-text feeds a
+          locally hosted LLM with tool-calling; those tools drive OpenCV detection, OCR, and a
+          homography that maps camera pixels into arm coordinates. Nothing leaves the machine.
+        </p>
+        <ul class="project__out">
+          <li>Runs fully offline on local hardware — no cloud APIs anywhere in the loop.</li>
+          <li>Letter detection with rotation-safe pick-and-place.</li>
+          <li>Built and defended as my bachelor's thesis, June 2026.</li>
+        </ul>
+        <div class="tags">
+          <span>Python</span><span>OpenCV</span><span>Tesseract OCR</span>
+          <span>local LLM</span><span>tool calling</span><span>homography</span><span>speech-to-text</span>
+        </div>
       </div>
-    </div>
-  </article>
+    </article>
 
-  <article class="project">
-    <div class="p-meta">
-      <span class="yr">2026</span>
-      <span class="role">Side project</span>
-    </div>
-    <div class="p-body">
-      <h3>TFT analytics platform</h3>
-      <p>A stats platform for Teamfight Tactics built on top of the Riot API. It combines player lookup, match history, composition analysis, and internal data tooling to turn raw match data into usable meta insights.</p>
-      <ul class="p-out">
-        <li>Match history and comp breakdowns designed for fast meta analysis.</li>
-        <li>Documentation-driven workflow to keep the codebase navigable as it grows.</li>
-        <li>Built as a growing stats platform, not a one-page Riot API demo.</li>
-      </ul>
-      <div class="p-stack">
-        <span>Next.js</span><span>React</span><span>Node.js</span><span>Riot API</span><span>PostgreSQL</span>
+    <article class="project" data-scene="2">
+      <div class="project__meta">
+        <span class="project__yr mono">2026</span>
+        <span class="project__role mono">Personal product · in production</span>
       </div>
-    </div>
-  </article>
-
-  <article class="project">
-    <div class="p-meta">
-      <span class="yr">2026</span>
-      <span class="role">Tool</span>
-    </div>
-    <div class="p-body">
-      <h3>CV Studio</h3>
-      <p>An interactive CV and résumé builder with live preview, ATS-safe mode, content linting, and multi-format export. Everything runs client-side, so the editing flow stays fast and private.</p>
-      <ul class="p-out">
-        <li>Fully client-side architecture with instant load and private editing flow.</li>
-        <li>ATS-safe mode and content checks built into the editor, not added as an afterthought.</li>
-      </ul>
-      <div class="p-stack">
-        <span>React</span><span>client-side</span><span>ATS-safe</span><span>PDF export</span><span>Resume builder</span>
+      <div class="project__body">
+        <h3>VB Visualizer</h3>
+        <p>
+          A browser music visualizer aimed at short-form video. Web Audio drives the real-time
+          analysis, several visual modes render to canvas, and LRCLIB lyrics stay in sync — clean
+          9:16 output without ever leaving the tab.
+        </p>
+        <ul class="project__out">
+          <li>Real-time audio analysis and synced lyrics, entirely client-side.</li>
+          <li>Rebuilt as a modular v2 so adding a visual mode stops being copy-paste.</li>
+        </ul>
+        <div class="tags">
+          <span>JavaScript</span><span>Web Audio API</span><span>Canvas</span>
+          <span>LRCLIB</span><span>browser-first</span>
+        </div>
       </div>
-    </div>
-  </article>
-</section>
+    </article>
 
-<section id="approach" class="wrap reveal" aria-label="How I work">
-  <div class="shead">
-    <h2>How I work</h2>
-    <span class="count mono">4 rules I actually follow</span>
-  </div>
-  <div class="rules">
-    <div class="rule">
-      <h3>Ship the <em>whole</em> pipeline.</h3>
-      <p>I care about complete systems, not isolated demos — from prototype to interface, integration, and deployment. The interesting part is making the whole thing work reliably, not just proving one piece in isolation.</p>
-    </div>
-    <div class="rule">
-      <h3>Debug at the <em>boundaries</em>.</h3>
-      <p>The hardest bugs usually appear where two systems meet. I like instrumenting those edges first, reducing guesswork, and tracing issues through the full flow before changing random parts.</p>
-    </div>
-    <div class="rule">
-      <h3><em>Local-first</em>, no black boxes.</h3>
-      <p>I prefer understanding the tools I use instead of depending on magic abstractions. When something breaks, I want enough control over the stack to inspect it, fix it, and improve it.</p>
-    </div>
-    <div class="rule">
-      <h3>Small tools, <em>sharp</em> edges.</h3>
-      <p>I like building focused tools that solve a clear problem well. Clean structure, practical scope, and honest implementation matter more to me than adding complexity for its own sake</p>
-    </div>
+    <article class="project" data-scene="3">
+      <div class="project__meta">
+        <span class="project__yr mono">2025—2026</span>
+        <span class="project__role mono">Side project</span>
+      </div>
+      <div class="project__body">
+        <h3>TFT analytics platform</h3>
+        <p>
+          A stats platform for Teamfight Tactics on top of the Riot API — player lookup, match
+          history, composition analysis, and the internal tooling that turns raw match data into
+          something you can actually read a meta out of.
+        </p>
+        <ul class="project__out">
+          <li>Comp breakdowns built for fast analysis, not just an API echo.</li>
+          <li>Documentation-driven, so the codebase stays navigable as it grows.</li>
+        </ul>
+        <div class="tags">
+          <span>Next.js</span><span>React</span><span>Node.js</span>
+          <span>Riot API</span><span>PostgreSQL</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="project" data-scene="4">
+      <div class="project__meta">
+        <span class="project__yr mono">2026</span>
+        <span class="project__role mono">Tool</span>
+      </div>
+      <div class="project__body">
+        <h3>CV Studio</h3>
+        <p>
+          A résumé builder with live preview, an ATS-safe mode, and content linting as you type.
+          Everything runs client-side, so editing stays instant and the document never leaves
+          the browser.
+        </p>
+        <ul class="project__out">
+          <li>Fully client-side — instant load, private by construction.</li>
+          <li>ATS checks live inside the editor rather than bolted on at export.</li>
+        </ul>
+        <div class="tags">
+          <span>React</span><span>client-side</span><span>ATS-safe</span><span>PDF export</span>
+        </div>
+      </div>
+    </article>
   </div>
 </section>
 
-<section id="stack" class="wrap reveal" aria-label="Stack">
-  <div class="shead">
-    <h2>Stack</h2>
-    <span class="count mono">daily drivers first</span>
+<!-- ───────────────────────────────────────────────── approach -->
+<section id="approach" class="section" aria-labelledby="approach-h" data-scene="5">
+  <div class="wrap">
+    <div class="shead" data-reveal>
+      <p class="eyebrow"><span class="eyebrow__idx mono">02</span> Heuristics</p>
+      <h2 id="approach-h">How I work</h2>
+      <span class="shead__count mono">4 rules I actually follow</span>
+    </div>
+
+    <div class="rules">
+      <div class="rule" data-reveal>
+        <h3>Ship the <em>whole</em> pipeline.</h3>
+        <p>I'd rather have one complete system than four impressive fragments. Prototype,
+        interface, integration, deploy — the interesting engineering is in making them hold
+        together, not in proving any one piece alone.</p>
+      </div>
+      <div class="rule" data-reveal>
+        <h3>Debug at the <em>boundaries</em>.</h3>
+        <p>The expensive bugs live where two systems meet. I instrument the seams first and
+        trace the whole flow before I start changing things in the middle.</p>
+      </div>
+      <div class="rule" data-reveal>
+        <h3><em>Local-first</em>, no black boxes.</h3>
+        <p>I want to be able to open the thing that broke. In practice that means fewer
+        dependencies, and actually understanding the ones I keep.</p>
+      </div>
+      <div class="rule" data-reveal>
+        <h3>Small tools, <em>sharp</em> edges.</h3>
+        <p>Clear scope beats broad scope. I'd rather a tool do one job precisely than ten
+        jobs approximately.</p>
+      </div>
+    </div>
   </div>
-  <dl>
-    <div class="stackrow"><dt>Vision, ML &amp; Robotics</dt><dd>Python · OpenCV · Tesseract OCR · CNNs · RL/DQN · robotics · Arduino/ESP · Webots · ROS2</dd></div>
-    <div class="stackrow"><dt>AI &amp; LLM Systems</dt><dd>local LLM · prompt design · tool calling · structured outputs · speech-to-text · multimodal pipelines</dd></div>
-    <div class="stackrow"><dt>Web &amp; Product</dt><dd>JavaScript/TypeScript · React · Next.js · Node.js · Canvas · Web Audio · browser-first apps </dd></div>
-    <div class="stackrow"><dt>Data &amp; Backend</dt><dd>SQL/PostgreSQL · REST APIs · data pipelines · classification/tagging logic · analytics tooling</dd></div>
-  </dl>
 </section>
 
-<section id="contact" class="wrap reveal" aria-label="Contact">
-  <p class="eyebrow">Contact</p>
-  <h2>Have something to build?</h2>
-  <p class="lede">I'm open to mid-level software roles and freelance builds — web, backend, vision, LLM tooling, whatever the problem calls for. Email me and you'll hear back within a day.</p>
-  <div class="cta-row">
-    <a class="btn btn-primary" id="email-btn" href="mailto:roman.safranko@outlook.com" data-email="roman.safranko@outlook.com" aria-label="Copy email address roman.safranko@outlook.com">roman.safranko@outlook.com</a>
-    <a class="btn btn-ghost" href="https://github.com/Mekr0t" target="_blank" rel="me noopener noreferrer">GitHub</a>
-    <a class="btn btn-ghost" href="cv.pdf" target="_blank" download>Download CV</a>
+<!-- ───────────────────────────────────────────────── stack -->
+<section id="stack" class="section" aria-labelledby="stack-h" data-scene="5">
+  <div class="wrap">
+    <div class="shead" data-reveal>
+      <p class="eyebrow"><span class="eyebrow__idx mono">03</span> Capabilities</p>
+      <h2 id="stack-h">Stack</h2>
+      <span class="shead__count mono">daily drivers first</span>
+    </div>
+
+    <dl class="stack">
+      <div class="stack__row" data-reveal>
+        <dt>Vision &amp; robotics</dt>
+        <dd>Python · OpenCV · Tesseract OCR · homography calibration · Dobot · Arduino/ESP · ROS2 · Webots</dd>
+      </div>
+      <div class="stack__row" data-reveal>
+        <dt>AI &amp; LLM systems</dt>
+        <dd>local LLM hosting · tool calling · structured outputs · prompt design · speech-to-text · multimodal pipelines</dd>
+      </div>
+      <div class="stack__row" data-reveal>
+        <dt>Web &amp; product</dt>
+        <dd>TypeScript · React · Next.js · Node.js · Canvas · Web Audio · WebGPU / three.js</dd>
+      </div>
+      <div class="stack__row" data-reveal>
+        <dt>Data &amp; platform</dt>
+        <dd>PostgreSQL · REST APIs · data pipelines · analytics tooling · Docker · Linux</dd>
+      </div>
+      <div class="stack__row" data-reveal>
+        <dt>Education</dt>
+        <dd>B.Sc. Computer Science · Technical University of Košice · 2023—2026</dd>
+      </div>
+    </dl>
   </div>
-  <p class="sk-note">Prefer Slovak? Píšte pokojne po slovensky.</p>
 </section>
 
-<footer>
-  <div class="foot-in">
-    <span>© <span id="yr">2026</span> Roman · Prešov, Slovakia</span>
-    <span>One HTML file · no framework · no tracking</span>
+<!-- ───────────────────────────────────────────────── contact -->
+<section id="contact" class="section section--contact section--split" aria-labelledby="contact-h" data-scene="6">
+  <div class="wrap">
+    <p class="eyebrow" data-reveal><span class="eyebrow__idx mono">04</span> Output</p>
+    <h2 id="contact-h" data-split>Have something that needs building?</h2>
+    <p class="lede" data-reveal>
+      I'm looking for software engineering roles and freelance work — web, backend, vision,
+      LLM tooling, whatever the problem actually calls for. Email is best; you'll hear back
+      inside a day.
+    </p>
+
+    <div class="cta" data-reveal>
+      <button class="btn btn--primary" id="email-btn" data-email="roman.safranko@outlook.com">
+        <span class="btn__label">roman.safranko@outlook.com</span>
+      </button>
+      <a class="btn btn--ghost" href="https://github.com/Mekr0t" target="_blank" rel="me noopener noreferrer">GitHub</a>
+      <a class="btn btn--ghost" href="/CV.pdf" target="_blank" rel="noopener">Download CV</a>
+    </div>
+
+    <p class="note mono" data-reveal>Prefer Slovak? Píšte pokojne po slovensky.</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <span class="mono">© <span id="yr">2026</span> Roman Šafranko · Prešov, Slovakia</span>
+    <span class="mono" id="foot-tech">WebGPU · three.js · no tracking</span>
   </div>
 </footer>
 
-<script>
-// keep the footer year honest
-document.getElementById('yr').textContent = new Date().getFullYear();
-
-// re-roll detection confidences on each visit (0.90–0.99)
-document.querySelectorAll('.det').forEach(el => {
-  el.dataset.conf = (0.90 + Math.random() * 0.09).toFixed(2);
-});
-
-// click the email button to copy the address instead of forcing a mail client open
-const emailBtn = document.getElementById('email-btn');
-if (emailBtn && navigator.clipboard) {
-  emailBtn.addEventListener('click', e => {
-    e.preventDefault();
-    navigator.clipboard.writeText(emailBtn.dataset.email).then(() => {
-      const original = emailBtn.textContent;
-      emailBtn.textContent = 'Copied!';
-      setTimeout(() => { emailBtn.textContent = original; }, 1600);
-    }).catch(() => { location.href = emailBtn.href; });
-  });
-}
-
-// gentle scroll reveal, skipped when reduced motion is preferred
-if (!matchMedia('(prefers-reduced-motion: reduce)').matches && 'IntersectionObserver' in window) {
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
-  }, { threshold: 0.08 });
-  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-} else {
-  document.querySelectorAll('.reveal').forEach(el => el.classList.add('in'));
-}
-</script>
 </body>
 </html>
