@@ -1,0 +1,144 @@
+/* ─────────────────────────────────────────────── inline detection box
+   Carried over from v1 — it was the strongest idea on the old site, and it's
+   now the through-line between the DOM and the 3D field. */
+
+.det {
+  position: relative;
+  display: inline-block;
+  padding: 0.02em 0.16em;
+  border: 1.5px solid var(--acc);
+  background-image:
+    linear-gradient(var(--acc), var(--acc)), linear-gradient(var(--acc), var(--acc)),
+    linear-gradient(var(--acc), var(--acc)), linear-gradient(var(--acc), var(--acc));
+  background-size: 7px 7px;
+  background-repeat: no-repeat;
+  background-position:
+    -1px -1px, calc(100% + 1px) -1px,
+    -1px calc(100% + 1px), calc(100% + 1px) calc(100% + 1px);
+}
+.det::before {
+  content: attr(data-label) '  ' attr(data-conf);
+  position: absolute;
+  bottom: calc(100% + 2px);
+  left: -1.5px;
+  padding: 3px 6px;
+  font: 500 10px / 1 var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: var(--acc);
+  color: var(--btn-ink);
+}
+
+/* ─────────────────────────────────────────────── 3D-anchored detections */
+
+.dets {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s var(--ease);
+  contain: layout style;
+}
+.dets.is-on { opacity: 1; }
+
+/* Below the split breakpoint the copy uses the full column, so there is no
+   clear area left for labels to live in. */
+@media (max-width: 999px) {
+  .dets { display: none; }
+}
+
+.hot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  will-change: transform;
+}
+.hot[data-side='left'] { flex-direction: row-reverse; }
+
+.hot__dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border: 1.5px solid var(--acc);
+  background: rgb(var(--scrim) / 0.6);
+  border-radius: 50%;
+}
+.hot__lead {
+  width: calc(26px * var(--lead, 1));
+  height: 1px;
+  flex: none;
+  background: linear-gradient(to right, var(--acc), rgb(var(--scrim) / 0));
+  background: var(--acc);
+  opacity: 0.55;
+}
+.hot__label {
+  font: 500 10px / 1.5 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--acc);
+  white-space: nowrap;
+  padding: 3px 7px;
+  border: 1px solid rgb(37 224 140 / 0.28);
+  background: rgb(var(--scrim) / 0.55);
+}
+.hot__label b {
+  font-weight: 500;
+  color: var(--muted);
+  margin-left: 7px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─────────────────────────────────────────────── buttons */
+
+.btn {
+  --btn-bg: transparent;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px 26px;
+  font: 600 0.94rem / 1 var(--body);
+  text-decoration: none;
+  border: 1.5px solid var(--line);
+  background: var(--btn-bg);
+  overflow: hidden;
+  transition: border-color 0.25s var(--ease), color 0.25s var(--ease);
+}
+.btn__label { position: relative; z-index: 1; }
+
+.btn--primary {
+  --btn-bg: var(--acc);
+  color: var(--btn-ink);
+  border-color: var(--acc);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+}
+.btn--primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ink);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.4s var(--ease);
+}
+.btn--primary:hover::after { transform: scaleX(1); transform-origin: left; }
+.btn--primary:hover { color: var(--bg); }
+.btn--primary.is-copied { color: var(--btn-ink); }
+.btn--primary.is-copied::after { transform: scaleX(0); }
+
+.btn--ghost { color: var(--ink); }
+.btn--ghost:hover { border-color: var(--acc); color: var(--acc); }
+
+.btn:active { transform: translateY(1px); }
+
+@media (prefers-reduced-motion: reduce) {
+  .btn--primary::after { display: none; }
+  .btn--primary:hover { background: var(--acc-ink); color: var(--btn-ink); }
+}

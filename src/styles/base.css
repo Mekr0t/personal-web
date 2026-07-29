@@ -1,0 +1,195 @@
+/* ─────────────────────────────────────────────── reset + base */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scrollbar-color: var(--line) transparent;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 var(--t-body) / 1.62 var(--body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+/* Lenis drives real window scroll; these are its documented hooks. */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }
+.lenis.lenis-stopped { overflow: hidden; }
+
+h1, h2, h3 {
+  font-family: var(--display);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.028em;
+  margin: 0;
+  text-wrap: balance;
+}
+
+p { margin: 0; text-wrap: pretty; }
+a { color: inherit; }
+img, svg, canvas { display: block; max-width: 100%; }
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+::selection { background: var(--acc); color: var(--btn-ink); }
+
+:focus-visible {
+  outline: 2px solid var(--acc);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.mono {
+  font-family: var(--mono);
+  font-variant-ligatures: none;
+}
+
+.wrap {
+  width: 100%;
+  max-width: var(--maxw);
+  margin-inline: auto;
+  padding-inline: var(--pad);
+}
+
+.skip {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 200;
+  padding: 10px 16px;
+  background: var(--acc);
+  color: var(--btn-ink);
+  font: 500 var(--t-mono) / 1 var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transform: translateY(-160%);
+  transition: transform 0.2s var(--ease);
+}
+.skip:focus-visible { transform: none; }
+
+/* ─────────────────────────────────────────────── gl stage */
+
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* Not `contain: strict` — that implies size containment, which collapses the
+     element to 0×0 and hands the renderer a zero-sized drawing buffer. */
+  contain: layout paint style;
+}
+
+#stage {
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transition: opacity 1.2s var(--ease);
+}
+body.is-ready #stage { opacity: 1; }
+/* No working GPU path — hide the dead canvas rather than leaving an empty
+   compositing layer over the page. */
+body.is-flat .stage { display: none; }
+
+/* Static grain. A CSS layer costs nothing per frame, unlike a post pass. */
+.stage__grain {
+  position: absolute;
+  inset: -50%;
+  opacity: 0.035;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme: light) { .stage__grain { opacity: 0.05; } }
+
+main, .nav, .foot { position: relative; z-index: 1; }
+
+/* ─────────────────────────────────────────────── boot */
+
+.boot {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  transition: opacity 0.7s var(--ease), visibility 0.7s;
+}
+body.is-booted .boot {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.boot__in {
+  display: grid;
+  gap: 14px;
+  justify-items: center;
+  width: min(300px, 68vw);
+}
+
+.boot__label {
+  margin: 0;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.boot__bar {
+  width: 100%;
+  height: 2px;
+  background: var(--line);
+  overflow: hidden;
+}
+.boot__bar i {
+  display: block;
+  height: 100%;
+  width: 0;
+  background: var(--acc);
+  transition: width 0.3s var(--ease-out);
+}
+
+.boot__pct {
+  margin: 0;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  color: var(--acc);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─────────────────────────────────────────────── reveals */
+
+[data-reveal],
+[data-split] .line__in {
+  will-change: transform, opacity;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+  }
+  [data-reveal].is-in {
+    opacity: 1;
+    transform: none;
+    transition: opacity 0.75s var(--ease-out), transform 0.75s var(--ease-out);
+  }
+}
+
+/* SplitText wraps each line; the inner span is what slides. */
+.line { overflow: hidden; display: block; }
+.line__in { display: block; }
