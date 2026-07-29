@@ -18,7 +18,7 @@ export async function createReveals() {
 
   if (reduced.matches) {
     for (const el of document.querySelectorAll('[data-reveal]')) el.classList.add('is-in');
-    return { dispose() {} };
+    return { start() {}, dispose() {} };
   }
 
   /* ── fade-up blocks ────────────────────────────────────────────── */
@@ -35,15 +35,6 @@ export async function createReveals() {
   );
 
   const fadeTargets = [...document.querySelectorAll('[data-reveal]')];
-  for (const el of fadeTargets) fadeObserver.observe(el);
-
-  // Safety net. These elements start at opacity 0, so anything that stops the
-  // observer from ever firing — a background tab that never composites, an
-  // aggressive privacy extension — would leave the page blank rather than
-  // merely un-animated. Reveal whatever is still hidden after a few seconds.
-  setTimeout(() => {
-    for (const el of fadeTargets) el.classList.add('is-in');
-  }, 4000);
 
   /* ── split headlines ───────────────────────────────────────────── */
 
@@ -107,11 +98,36 @@ export async function createReveals() {
     lineObserver.observe(el);
   }
 
+  /**
+   * Attach the observers.
+   *
+   * Deliberately not done at construction time. The boot overlay covers the
+   * page while the GPU work finishes, and an observer attached underneath it
+   * fires immediately for everything already in view — so by the time the
+   * overlay lifts, the whole page has quietly finished animating and the user
+   * sees a static page appear.
+   */
+  function start() {
+    for (const el of fadeTargets) fadeObserver.observe(el);
+    for (const el of splitTargets) if (el._split) lineObserver.observe(el);
+
+    // Safety net. These elements start at opacity 0, so anything that stops the
+    // observer from ever firing — a tab that never composites, an aggressive
+    // privacy extension — would leave the page blank rather than merely
+    // un-animated. Reveal whatever is still hidden after a few seconds.
+    setTimeout(() => {
+      for (const el of fadeTargets) el.classList.add('is-in');
+      for (const el of splitTargets) {
+        if (el._split) gsap.set(el._split.lines, { yPercent: 0 });
+      }
+    }, 4000);
+  }
+
   function dispose() {
     fadeObserver.disconnect();
     lineObserver.disconnect();
     for (const split of splits) split.revert();
   }
 
-  return { dispose };
+  return { start, dispose };
 }

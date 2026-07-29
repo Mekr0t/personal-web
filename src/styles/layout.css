@@ -88,13 +88,6 @@
   background: var(--acc);
   flex: none;
 }
-@media (prefers-reduced-motion: no-preference) {
-  .status i { animation: pulse 2.6s var(--ease) infinite; }
-  @keyframes pulse {
-    0%, 100% { box-shadow: 0 0 0 0 rgb(37 224 140 / 0.5); }
-    60% { box-shadow: 0 0 0 7px rgb(37 224 140 / 0); }
-  }
-}
 
 .nav__progress {
   height: 1.5px;
@@ -122,6 +115,38 @@
   justify-content: center;
   min-height: calc(100svh - 52px);
   padding-block: clamp(64px, 12vh, 132px) clamp(80px, 16vh, 168px);
+}
+
+/* The field is at its brightest and densest behind the hero, which is also the
+   only copy that has to be readable instantly. Scrim the left side hard and let
+   it clear before the subject, which the camera holds right of centre. */
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(
+    to right,
+    rgb(var(--scrim) / 0.94) 0%,
+    rgb(var(--scrim) / 0.9) 42%,
+    rgb(var(--scrim) / 0.62) 62%,
+    rgb(var(--scrim) / 0.12) 80%,
+    rgb(var(--scrim) / 0) 92%
+  );
+}
+
+/* Below the split breakpoint the copy uses the full width, so the scrim has to
+   cover the full width with it. */
+@media (max-width: 999px) {
+  .hero::before {
+    background: linear-gradient(
+      to bottom,
+      rgb(var(--scrim) / 0.82) 0%,
+      rgb(var(--scrim) / 0.88) 45%,
+      rgb(var(--scrim) / 0.94) 100%
+    );
+  }
 }
 
 .hero__h {
@@ -174,42 +199,6 @@
 }
 .facts .ok { color: var(--acc); }
 
-.hero__scroll {
-  position: absolute;
-  left: var(--pad);
-  bottom: clamp(24px, 5vh, 44px);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 10px;
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-.hero__scroll i {
-  width: 46px;
-  height: 1px;
-  background: var(--line);
-  position: relative;
-  overflow: hidden;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .hero__scroll i::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--acc);
-    transform-origin: left;
-    animation: sweep 2.4s var(--ease) infinite;
-  }
-  @keyframes sweep {
-    0% { transform: scaleX(0); transform-origin: left; }
-    45% { transform: scaleX(1); transform-origin: left; }
-    55% { transform: scaleX(1); transform-origin: right; }
-    100% { transform: scaleX(0); transform-origin: right; }
-  }
-}
-
 /* ─────────────────────────────────────────────── sections */
 
 .section {
@@ -250,33 +239,30 @@
 @media (min-width: 1000px) {
   .section--split .wrap > * { max-width: 66%; }
 
+  /* One gradient, not two multiplied together. Stacking a horizontal and a
+     vertical scrim with `background-blend-mode: multiply` compounds their
+     opacities, and the right-hand side ends up near-solid — burying the exact
+     thing the split layout exists to reveal. */
   .section--split::before {
-    background:
-      linear-gradient(to right,
-        rgb(var(--scrim) / 1) 0%,
-        rgb(var(--scrim) / 1) 50%,
-        rgb(var(--scrim) / 0.2) 76%,
-        rgb(var(--scrim) / 0) 90%),
-      linear-gradient(to bottom,
-        rgb(var(--scrim) / 0) 0%,
-        rgb(var(--scrim) / 0.86) 11%,
-        rgb(var(--scrim) / 0.86) 89%,
-        rgb(var(--scrim) / 0) 100%);
-    background-blend-mode: multiply;
+    background: linear-gradient(
+      to right,
+      rgb(var(--scrim) / 0.95) 0%,
+      rgb(var(--scrim) / 0.92) 46%,
+      rgb(var(--scrim) / 0.5) 62%,
+      rgb(var(--scrim) / 0.08) 78%,
+      rgb(var(--scrim) / 0) 88%
+    );
   }
 
   .section--contact::before {
-    background:
-      linear-gradient(to right,
-        rgb(var(--scrim) / 1) 0%,
-        rgb(var(--scrim) / 1) 46%,
-        rgb(var(--scrim) / 0.15) 72%,
-        rgb(var(--scrim) / 0) 88%),
-      linear-gradient(to bottom,
-        rgb(var(--scrim) / 0) 0%,
-        rgb(var(--scrim) / 0.62) 30%,
-        rgb(var(--scrim) / 0.72) 100%);
-    background-blend-mode: multiply;
+    background: linear-gradient(
+      to right,
+      rgb(var(--scrim) / 0.92) 0%,
+      rgb(var(--scrim) / 0.88) 42%,
+      rgb(var(--scrim) / 0.4) 60%,
+      rgb(var(--scrim) / 0.05) 76%,
+      rgb(var(--scrim) / 0) 88%
+    );
   }
 }
 

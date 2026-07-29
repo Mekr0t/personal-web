@@ -14,24 +14,42 @@ import { Vector3, MathUtils } from 'three/webgpu';
  * the camera spins the long way round on the way to the next stop.
  */
 const STOPS = [
-  // scan — hero. Object sits right of the copy.
-  { radius: 12.6, theta: 0.42, phi: 1.46, fov: 42, offset: [0.40, 0.02] },
+  // scan — hero. Pushed well right and held back: this is the only copy that
+  // has to be readable the instant the page opens, so the subject clears it
+  // rather than relying on the scrim alone.
+  { radius: 14.6, theta: 0.42, phi: 1.46, fov: 42, offset: [0.58, 0.02] },
+  // The project stops all sit well right of centre: on a split section the copy
+  // owns the left two thirds, and a subject any closer to the middle lands
+  // under the scrim that keeps that copy readable.
   // arm — thesis
-  { radius: 11.2, theta: 1.12, phi: 1.34, fov: 40, offset: [0.34, -0.03] },
+  { radius: 11.2, theta: 1.12, phi: 1.34, fov: 40, offset: [0.52, -0.03] },
   // wave — visualizer
-  { radius: 10.2, theta: 2.04, phi: 1.22, fov: 44, offset: [0.36, 0.00] },
+  { radius: 10.2, theta: 2.04, phi: 1.22, fov: 44, offset: [0.54, 0.00] },
   // board — TFT
-  { radius: 10.8, theta: 2.96, phi: 1.12, fov: 42, offset: [0.34, 0.03] },
+  { radius: 10.8, theta: 2.96, phi: 1.12, fov: 42, offset: [0.52, 0.03] },
   // page — CV Studio
-  { radius: 9.6, theta: 3.88, phi: 1.50, fov: 40, offset: [0.36, 0.00] },
-  // lattice — approach + stack, pulled back and centred, it is only atmosphere here
+  { radius: 9.6, theta: 3.88, phi: 1.50, fov: 40, offset: [0.54, 0.00] },
+  // lattice — approach + stack. These are full-width reading sections, so the
+  // lattice stays centred and pulled back: it is only atmosphere here.
   { radius: 14.2, theta: 4.74, phi: 1.30, fov: 46, offset: [0.08, 0.00] },
   // core — contact
-  { radius: 10.4, theta: 5.86, phi: 1.44, fov: 40, offset: [0.00, 0.02] },
+  { radius: 10.4, theta: 5.86, phi: 1.44, fov: 40, offset: [0.46, 0.02] },
 ];
 
 /** Slow in and out, so the camera settles at a stop instead of sailing through. */
 const smootherstep = (t) => t * t * t * (t * (t * 6 - 15) + 10);
+
+/**
+ * Where the handover happens inside a segment, as a fraction of it.
+ *
+ * Without this the scene value moves linearly between two stops, so the
+ * midpoint of the scroll range sits at exactly the point of maximum dispersion
+ * — and a reader who stops there is left looking at permanent mush rather than
+ * at a form. Holding near each stop and crossing quickly in between makes the
+ * settled, readable state the common one and the burst a brief event.
+ */
+const HANDOVER_START = 0.34;
+const HANDOVER_LENGTH = 0.32;
 
 export function createRig({ camera, sections }) {
   const lookAt = new Vector3();
@@ -93,8 +111,9 @@ export function createRig({ camera, sections }) {
       const a = anchors[i];
       const b = anchors[i + 1];
       if (y <= b.y) {
-        const f = smootherstep((y - a.y) / (b.y - a.y));
-        return a.scene + (b.scene - a.scene) * f;
+        const raw = (y - a.y) / (b.y - a.y);
+        const windowed = MathUtils.clamp((raw - HANDOVER_START) / HANDOVER_LENGTH, 0, 1);
+        return a.scene + (b.scene - a.scene) * smootherstep(windowed);
       }
     }
     return anchors[anchors.length - 1].scene;

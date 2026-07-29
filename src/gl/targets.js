@@ -11,6 +11,8 @@
  * Seeded throughout, so the layout is identical on every load.
  */
 
+import { nextFrame } from '../util/frame.js';
+
 export const SCENES = ['scan', 'arm', 'wave', 'board', 'page', 'lattice', 'core'];
 
 /** mulberry32 — small, fast, and deterministic. */
@@ -423,13 +425,26 @@ const GENERATORS = { scan, arm, wave, board, page, lattice, core };
 
 /**
  * Build every target buffer.
+ *
+ * Async and yielding between forms on purpose: at 92k points this writes 2.6M
+ * floats, which is long enough to block the main thread past the point where
+ * the loader can repaint. One form per frame keeps the bar honestly moving.
+ *
  * @param {number} count points per form
- * @returns {Float32Array[]} one `count * 4` array per entry in SCENES
+ * @param {(fraction: number) => void} [onProgress] called after each form
+ * @returns {Promise<Float32Array[]>} one `count * 4` array per entry in SCENES
  */
-export function buildTargets(count) {
-  return SCENES.map((name, i) => {
-    const out = new Float32Array(count * 4);
-    GENERATORS[name](out, count, mulberry32(0x9e37 + i * 7919));
-    return out;
-  });
+export async function buildTargets(count, onProgress) {
+  const out = [];
+
+  for (let i = 0; i < SCENES.length; i++) {
+    const buffer = new Float32Array(count * 4);
+    GENERATORS[SCENES[i]](buffer, count, mulberry32(0x9e37 + i * 7919));
+    out.push(buffer);
+
+    onProgress?.((i + 1) / SCENES.length);
+    await nextFrame();
+  }
+
+  return out;
 }

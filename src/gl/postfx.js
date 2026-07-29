@@ -19,7 +19,10 @@ export function createPostFX({ renderer, scene, camera }) {
     // values are order 1, not the order 1e-4 that pmndrs/postprocessing wants.
     aberration: uniform(0.3),
     vignette: uniform(0.62),
-    bloomStrength: uniform(0.85),
+    // Enough to make the accents glow, not enough to melt them into featureless
+    // white blobs — the joints of the arm and the unit stacks on the board have
+    // shape worth keeping.
+    bloomStrength: uniform(0.6),
   };
 
   // High threshold, moderate strength. Below ~0.7 the mid-tones of the field

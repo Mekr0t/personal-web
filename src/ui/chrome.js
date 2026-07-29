@@ -18,7 +18,7 @@ export function createChrome() {
   /* ── inline detection confidences ─────────────────────────────── */
 
   for (const el of document.querySelectorAll('.det')) {
-    el.dataset.conf = (0.9 + Math.random() * 0.098).toFixed(2);
+    el.dataset.conf = (0.88 + Math.random() * 0.11).toFixed(2);
   }
 
   /* ── scrollspy ────────────────────────────────────────────────── */

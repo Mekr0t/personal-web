@@ -45,8 +45,8 @@ import { buildTargets, SCENES } from './targets.js';
  * Rendered as instanced sprites rather than `Points`, because WebGPU point
  * primitives are fixed at one pixel and cannot express size or softness.
  */
-export function createField({ count = 90000 } = {}) {
-  const targets = buildTargets(count);
+export async function createField({ count = 90000, onProgress } = {}) {
+  const targets = await buildTargets(count, onProgress);
 
   const attributes = targets.map((data) => new InstancedBufferAttribute(data, 4));
   const nodes = attributes.map((attr) => instancedBufferAttribute(attr, 'vec4'));
@@ -90,11 +90,15 @@ export function createField({ count = 90000 } = {}) {
     .mul(0.32)
     .add(vec3(uniforms.time.mul(0.11), uniforms.time.mul(0.08), uniforms.time.mul(0.14)));
 
-  const turbulence = mx_noise_vec3(flow).mul(1.25);
+  const turbulence = mx_noise_vec3(flow).mul(0.6);
 
   // A little outward push on top of the noise, so the burst reads as radial
   // rather than as an even shake. Epsilon keeps normalize away from the origin.
-  const outward = normalize(blended.add(vec3(0.0001, 0.0001, 0.0001))).mul(hash.mul(0.9).add(0.3));
+  //
+  // Kept modest on purpose: a large displacement at this camera distance throws
+  // points clear across the frame and over the copy, and the result reads as
+  // fog rather than as a thing coming apart.
+  const outward = normalize(blended.add(vec3(0.0001, 0.0001, 0.0001))).mul(hash.mul(0.5).add(0.18));
 
   const dispersion = turbulence
     .add(outward)
@@ -118,7 +122,7 @@ export function createField({ count = 90000 } = {}) {
   material.positionNode = blended.add(dispersion).add(idle);
 
   // Accent points are larger; everything swells slightly mid-transition.
-  material.sizeNode = accent.mul(0.062).add(0.036).mul(transition.mul(0.3).add(1));
+  material.sizeNode = accent.mul(0.05).add(0.034).mul(transition.mul(0.3).add(1));
 
   const tint = mix(uniforms.base, uniforms.accent, pow(accent, 0.65));
   material.colorNode = vec4(tint.mul(uniforms.intensity).mul(transition.mul(0.55).add(1)), 1);

@@ -41,7 +41,8 @@ export function createDetections({ layer, camera }) {
     // resolution, and it looks deliberate.
     el.style.setProperty('--lead', String(spot.lead));
 
-    const confidence = (0.9 + Math.random() * 0.098).toFixed(2);
+    // Capped below 1 — a detector reporting 1.00 confidence reads as fake.
+    const confidence = (0.88 + Math.random() * 0.11).toFixed(2);
     el.innerHTML =
       '<i class="hot__dot"></i><i class="hot__lead"></i>' +
       `<span class="hot__label">${spot.label}<b>${confidence}</b></span>`;

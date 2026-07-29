@@ -23,6 +23,7 @@ import { createRig } from './scroll/rig.js';
 import { createChrome } from './ui/chrome.js';
 import { createReveals } from './ui/reveal.js';
 import { createDetections } from './ui/detections.js';
+import { nextFrame } from './util/frame.js';
 
 const reduced = matchMedia('(prefers-reduced-motion: reduce)');
 const darkQuery = matchMedia('(prefers-color-scheme: dark)');
@@ -40,6 +41,7 @@ function progress(value) {
 }
 
 function finishBoot() {
+  progress(1);
   document.body.classList.add('is-booted', 'is-ready');
   // Nothing behind it is interactive, and it is aria-hidden, but leaving a
   // full-screen element in the tree is a good way to trap a future click.
@@ -62,14 +64,22 @@ function pointBudget() {
 /* ── main ──────────────────────────────────────────────────────────── */
 
 async function main() {
+  const bootStarted = performance.now();
   const canvas = document.getElementById('stage');
 
   // The copy is real DOM and never depended on the canvas, so a machine with no
   // working GPU path still gets the whole site — it just gets it flat.
   const chrome = createChrome();
-  createReveals();
 
-  progress(0.12);
+  // Kick the font wait and text splitting off now, but the observers are not
+  // attached until the boot overlay lifts — see reveals.start() below.
+  const revealsPending = createReveals();
+
+  progress(0.08);
+  // Yield after every stage, or none of these values ever reach the screen:
+  // the next stage blocks the thread before the browser gets a chance to paint,
+  // and the loader appears stuck on its first number.
+  await nextFrame();
 
   let stage;
   try {
@@ -79,18 +89,26 @@ async function main() {
     chrome.setBackend('no GPU');
     document.body.classList.add('is-flat');
     finishBoot();
+    (await revealsPending).start();
     return;
   }
 
   chrome.setBackend(stage.isWebGPU ? 'WebGPU' : 'WebGL2');
-  progress(0.42);
+  progress(0.2);
+  await nextFrame();
 
   const { renderer, scene, camera } = stage;
 
-  const field = createField({ count: pointBudget() });
+  // The seven forms are built one per frame, so this stretch of the bar is
+  // real progress rather than a guess.
+  const field = await createField({
+    count: pointBudget(),
+    onProgress: (fraction) => progress(0.2 + fraction * 0.6),
+  });
   scene.add(field.object);
 
-  progress(0.62);
+  progress(0.82);
+  await nextFrame();
 
   const postfx = createPostFX({ renderer, scene, camera });
 
@@ -136,7 +154,8 @@ async function main() {
     console.warn('[postfx] first frame failed:', error);
   }
 
-  progress(1);
+  progress(0.96);
+  await nextFrame();
 
   /* ── scroll ──────────────────────────────────────────────────────── */
 
@@ -202,9 +221,17 @@ async function main() {
 
   finishBoot();
 
+  // Start the copy animations as the overlay fades, not before it — otherwise
+  // they play underneath it and the page arrives already finished.
+  const reveals = await revealsPending;
+  setTimeout(() => reveals.start(), 240);
+
   if (import.meta.env.DEV) {
     window.site = { stage, field, postfx, rig, quality, lenis };
-    console.info(`[boot] ready · ${stage.isWebGPU ? 'WebGPU' : 'WebGL2'} · ${field.count} points`);
+    console.info(
+      `[boot] ready · ${stage.isWebGPU ? 'WebGPU' : 'WebGL2'} · ${field.count} points · ` +
+      `${Math.round(performance.now() - bootStarted)}ms`,
+    );
   }
 }
 
@@ -212,4 +239,7 @@ main().catch((error) => {
   console.error('[boot] failed:', error);
   document.body.classList.add('is-flat');
   finishBoot();
+  // The copy must never be left invisible because the GPU path fell over.
+  for (const el of document.querySelectorAll('[data-reveal]')) el.classList.add('is-in');
+  for (const el of document.querySelectorAll('[data-split]')) el.style.visibility = '';
 });
