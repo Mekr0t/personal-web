@@ -104,10 +104,6 @@ a{color:inherit}
   text-transform:uppercase;
 }
 .dim{color:var(--graphite)}
-.ph{
-  border-bottom:1px dashed var(--signal);
-  color:var(--graphite);
-}
 
 /* ─────────────────────────────────────────────────────────────
    NAV — one hairline, no shadow, no blur, no logo.
@@ -306,27 +302,6 @@ a{color:inherit}
 .contact__k{width:120px;flex:none;color:var(--graphite)}
 .contact__val{font-variation-settings:"wdth" 100,"wght" 500;font-size:17px}
 
-/* the ledger — what the constraints cost, and what's unresolved.
-   Closes the page on judgement rather than on a statistic. */
-.ledger{
-  margin-top:72px;
-  border-top:1px solid var(--ink);
-  display:grid;grid-template-columns:1fr 1fr;
-}
-.ledger__col{padding:22px 30px 34px 0;border-right:1px solid var(--rule)}
-.ledger__col:last-child{border-right:0;padding:22px 0 34px 30px}
-.ledger__k{display:block;color:var(--graphite);margin-bottom:20px}
-.ledger__list{list-style:none;margin:0;padding:0}
-.ledger__list li{padding:0 0 18px;max-width:46ch}
-.ledger__list li:last-child{padding-bottom:0}
-.ledger__list b{
-  display:block;font-size:16px;line-height:1.3;
-  font-variation-settings:"wdth" 105,"wght" 600;
-}
-.ledger__list span{
-  display:block;margin-top:5px;color:var(--graphite);
-  font-size:14.5px;line-height:1.45;
-}
 .colophon{
   margin:0;padding:16px 0 44px;border-top:1px solid var(--rule);
   display:flex;flex-wrap:wrap;gap:8px 26px;color:var(--graphite);
@@ -370,9 +345,6 @@ a{color:inherit}
   .entry__date{display:flex;gap:10px;padding:0 0 12px}
   .entry__body,.constraint,.hero__lede{max-width:none}
   .contact__k{width:88px}
-  .ledger{grid-template-columns:1fr}
-  .ledger__col{border-right:0;padding:22px 0 26px}
-  .ledger__col:last-child{padding:22px 0 30px;border-top:1px solid var(--rule)}
 }
 @media (max-width:520px){
   .readout{grid-template-columns:1fr}
@@ -423,7 +395,7 @@ a{color:inherit}
       </div>
       <div class="readout__cell">
         <span class="readout__k mono">Status</span>
-        <span class="readout__v">Open to junior / mid roles — full-stack, backend, AI tooling</span>
+        <span class="readout__v">Ing. student · open to part-time, internship or remote project work (Košice / remote)</span>
       </div>
     </div>
   </header>
